@@ -18,7 +18,8 @@ export default function ResumePage() {
         <div className="mt-4">
           <Link
             href="/resume/download"
-            className="inline-flex rounded-xl bg-black px-4 py-2 text-sm text-white hover:opacity-90"
+            target="_blank"
+            className="rounded-xl bg-black px-4 py-2 text-sm text-white hover:opacity-90"
           >
             Download Resume
           </Link>

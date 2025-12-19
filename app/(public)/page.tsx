@@ -8,6 +8,7 @@ export default function HomePage() {
   return (
     <Container>
       <section className="space-y-4">
+
         <h1 className="text-4xl font-semibold tracking-tight">
           {site.name}
         </h1>
