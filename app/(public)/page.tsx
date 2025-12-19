@@ -26,6 +26,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="/resume/download"
+            target="_blank"
             className="rounded-xl bg-black px-4 py-2 text-sm text-white hover:opacity-90"
           >
             Download Resume
