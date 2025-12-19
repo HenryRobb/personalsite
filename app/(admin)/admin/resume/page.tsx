@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import UploadForm from "./upload-form"
+import type { Resume } from "@prisma/client"
 
 export default async function AdminResumePage() {
   const session = await auth()
@@ -10,12 +11,12 @@ export default async function AdminResumePage() {
   if (!session?.user?.email) redirect("/api/auth/signin")
   if (adminEmail && session.user.email !== adminEmail) redirect("/")
 
-  const current = await prisma.resume.findFirst({
+  const current: Resume | null = await prisma.resume.findFirst({
     where: { isCurrent: true },
     orderBy: { createdAt: "desc" },
   })
 
-  const resumes = await prisma.resume.findMany({
+  const resumes: Resume[] = await prisma.resume.findMany({
     orderBy: { createdAt: "desc" },
     take: 20,
   })
@@ -33,9 +34,7 @@ export default async function AdminResumePage() {
         <h2>Current</h2>
         {current ? (
           <div style={{ display: "grid", gap: 8 }}>
-            <div>
-              Uploaded: {current.createdAt.toLocaleString()}
-            </div>
+            <div>Uploaded: {current.createdAt.toLocaleString()}</div>
             <a href={current.url} target="_blank" rel="noreferrer">
               Open PDF
             </a>
@@ -51,7 +50,7 @@ export default async function AdminResumePage() {
       <section style={{ border: "1px solid #333", padding: 16, borderRadius: 12 }}>
         <h2>History</h2>
         <ul style={{ display: "grid", gap: 8 }}>
-          {resumes.map((r) => (
+          {resumes.map((r: Resume) => (
             <li key={r.id}>
               {r.isCurrent ? "✅ " : ""}
               {r.createdAt.toLocaleString()} —{" "}
