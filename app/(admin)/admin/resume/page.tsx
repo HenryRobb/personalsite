@@ -10,12 +10,15 @@ export default async function AdminResumePage() {
   if (!session?.user?.email) redirect("/api/auth/signin")
   if (adminEmail && session.user.email !== adminEmail) redirect("/")
 
+  const current = await prisma.resume.findFirst({
+    where: { isCurrent: true },
+    orderBy: { createdAt: "desc" },
+  })
+
   const resumes = await prisma.resume.findMany({
     orderBy: { createdAt: "desc" },
     take: 20,
   })
-
-  const current = resumes.find(r => r.isCurrent) ?? null
 
   return (
     <div style={{ padding: 24, display: "grid", gap: 16 }}>
@@ -30,9 +33,15 @@ export default async function AdminResumePage() {
         <h2>Current</h2>
         {current ? (
           <div style={{ display: "grid", gap: 8 }}>
-            <div>Uploaded: {current.createdAt.toISOString()}</div>
-            <a href={current.url} target="_blank" rel="noreferrer">Open PDF</a>
-            <a href="/resume/download" target="_blank" rel="noreferrer">Public download link</a>
+            <div>
+              Uploaded: {current.createdAt.toLocaleString()}
+            </div>
+            <a href={current.url} target="_blank" rel="noreferrer">
+              Open PDF
+            </a>
+            <a href="/resume/download" target="_blank" rel="noreferrer">
+              Public download link
+            </a>
           </div>
         ) : (
           <p>No resume uploaded yet.</p>
@@ -42,10 +51,13 @@ export default async function AdminResumePage() {
       <section style={{ border: "1px solid #333", padding: 16, borderRadius: 12 }}>
         <h2>History</h2>
         <ul style={{ display: "grid", gap: 8 }}>
-          {resumes.map(r => (
+          {resumes.map((r) => (
             <li key={r.id}>
-              {r.isCurrent ? "✅ " : ""}{new Date(r.createdAt).toLocaleString()} —{" "}
-              <a href={r.url} target="_blank" rel="noreferrer">open</a>
+              {r.isCurrent ? "✅ " : ""}
+              {r.createdAt.toLocaleString()} —{" "}
+              <a href={r.url} target="_blank" rel="noreferrer">
+                open
+              </a>
             </li>
           ))}
         </ul>
